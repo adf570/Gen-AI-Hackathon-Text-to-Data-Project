@@ -1,0 +1,131 @@
+
+1. Total loan amount for Pool A and channel PS customers:
+SELECT SUM(loan__Loan_Amount__c) AS total_loan 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'PS' AND APR__c BETWEEN 0 AND 36;
+
+2. Total loan amount for channel PS customers:
+SELECT SUM(loan__Loan_Amount__c) AS total_loan 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'PS';
+
+3. Total loan amount for Pool B and channel ORG customers:
+SELECT SUM(loan__Loan_Amount__c) AS total_loan 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'ORG' AND APR__c BETWEEN 37 AND 60;
+
+4. Total loan amount for Pool C and channel RF customers:
+SELECT SUM(loan__Loan_Amount__c) AS total_loan 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'RF' AND APR__c BETWEEN 61 AND 100;
+
+5. Total loan amount for Pool D and channel RA customers:
+SELECT SUM(loan__Loan_Amount__c) AS total_loan 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'RA' AND APR__c > 100;
+
+6. Total loan amount for Pool A and affiliate channel PB customers:
+SELECT SUM(loan__Loan_Amount__c) AS total_loan 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'PB' AND APR__c BETWEEN 0 AND 36;
+
+7. Count of loans for Pool A and channel PS customers:
+SELECT COUNT(*) AS cl_import.loan__Loan_Account__c 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'PS' AND APR__c BETWEEN 0 AND 36;
+
+8. Count of loans for Pool B and channel ORG customers:
+SELECT COUNT(*) AS cl_import.loan__Loan_Account__c 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'ORG' AND APR__c BETWEEN 37 AND 60;
+
+9. Count of loans for Pool C and channel RF customers:
+SELECT COUNT(*) AS cl_import.loan__Loan_Account__c 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'RF' AND APR__c BETWEEN 61 AND 100;
+
+10. Count of loans for Pool D and channel RA customers:
+SELECT COUNT(*) AS cl_import.loan__Loan_Account__c 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'RA' AND APR__c > 100;
+
+11. Count of loans for Pool B and affiliate channel CKPQ customers:
+SELECT COUNT(*) AS cl_import.loan__Loan_Account__c 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'CKPQ' AND APR__c BETWEEN 37 AND 60;
+
+12. Compute the 2PD_15 rate for Pool A and channel PS customers for 2022-01 vintage:
+SELECT LEFT(disbursal_date, 7) AS Vintage, 
+       (SUM(PD_15) / COUNT(PD_15)) AS PD15_Rate 
+FROM DV_tables.Equity_Deck_V2_20241206 a join cl_import.loan__Loan_Account__c b  on a.loanid =b.Name
+WHERE Lead_Path__c = 'PS' AND APR BETWEEN 0 AND 36 AND PD_15 != -99 AND LEFT(disbursal_date, 7) = '2022-01'and cycle_no=2 
+GROUP BY 1;
+
+13. Compute the 1PD_15 rate for and channel PS customers for 2022-01 vintage:
+SELECT LEFT(disbursal_date, 7) AS Vintage, 
+       (SUM(PD_15) / COUNT(PD_15)) AS PD15_Rate 
+FROM DV_tables.Equity_Deck_V2_20241206 a join cl_import.loan__Loan_Account__c b  on a.loanid =b.Name 
+WHERE cycle_no=1 AND Lead_Path__c = 'PS' AND LEFT(disbursal_date, 7) = '2022-01'  AND PD_15 != -99 
+
+14. Compute the 6PD_15 rate.
+SELECT LEFT(disbursal_date, 7) AS Vintage, 
+       (SUM(PD_15) / COUNT(PD_15)) AS PD15_Rate 
+FROM DV_tables.Equity_Deck_V2_20241206 
+WHERE cycle_no=15 AND PD_15 != -99
+
+15. Compute the 7PD_15 rate.
+SELECT LEFT(disbursal_date, 7) AS Vintage, 
+       (SUM(PD_15) / COUNT(PD_15)) AS PD15_Rate 
+FROM DV_tables.Equity_Deck_V2_20241206 
+WHERE  PD_15 != -99 AND cycle_no=7
+
+16. Compute the 2PD_15 rate for fifferent vintages.
+SELECT LEFT(disbursal_date, 7) AS Vintage, 
+       (SUM(PD_15) / COUNT(PD_15)) AS PD15_Rate 
+FROM DV_tables.Equity_Deck_V2_20241206 
+WHERE  PD_15 != -99 AND cycle_no=3 group by 1
+
+17. Compute the overall 2PD_15 rate .
+SELECT (SUM(PD_15) / COUNT(PD_15)) AS PD15_Rate 
+FROM DV_tables.Equity_Deck_V2_20241206 
+WHERE  PD_15 != -99 AND cycle_no=3
+
+18. Compute the 1PD_7 rate for Pool B and channel ORG customers for 2022-05 vintage:
+SELECT LEFT(disbursal_date, 7) AS Vintage, 
+       (SUM(PD_7) / COUNT(PD_7)) AS PD7_Rate 
+FROM DV_tables.Equity_Deck_V2_20241206  a join cl_import.loan__Loan_Account__c b  on a.loanid =b.Name
+WHERE Lead_Path__c = 'ORG' AND APR BETWEEN 37 AND 60 AND LEFT(disbursal_date, 7) = '2022-05'  AND Cycle_No=1 AND PD_7 != -99
+GROUP BY 1;
+
+20. Trend of average APR for Pool A and channel ORG customers across vintages:
+SELECT LEFT(loan__Disbursal_Date__c, 7) AS Vintage, 
+       AVG(APR__c) AS Average_APR 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'ORG' AND APR__c BETWEEN 0 AND 36 
+GROUP BY 1;
+
+
+21. Total loan amount for channel RF customers in Pool B for 2023:
+SELECT SUM(loan__Loan_Amount__c) AS total_loan 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'RF' AND APR__c BETWEEN 37 AND 60 AND LEFT(loan__Disbursal_Date__c, 4) = '2023';
+
+22. Count of loans for channel RA customers in Pool C for 2023:
+SELECT COUNT(*) AS cl_import.loan__Loan_Account__c 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'RA' AND APR__c BETWEEN 61 AND 100 AND LEFT(loan__Disbursal_Date__c, 4) = '2023';
+
+
+23. Trend of interest rate for affiliate channel CKPQ customers in Pool D across vintages:
+SELECT LEFT(loan__Disbursal_Date__c, 7) AS Vintage, 
+       AVG(loan__Interest_Rate__c) AS Average_Int_Rate 
+FROM cl_import.loan__Loan_Account__c 
+WHERE Lead_Path__c = 'CKPQ' AND APR__c > 100 
+GROUP BY 1;
+
+24. what is the MM for 2024-01 vintage.
+SELECT LEFT(loan__Disbursal_Date__c, 7) AS Vintage, 
+    (SUM(loan__Principal_Paid__c)+SUM(loan__Interest_Paid__c)) / SUM(loan__Loan_Amount__c) AS MM 
+FROM cl_import.loan__Loan_Account__c 
+WHERE LEFT(loan__Disbursal_Date__c, 7) = '2024-01';
+    
